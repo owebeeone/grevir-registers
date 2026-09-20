@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.20)
+project(grevir_registers_consumer LANGUAGES CXX)
+find_package(grevir-registers CONFIG REQUIRED)
+add_executable(grevir_registers_consumer main.cpp)
+target_link_libraries(grevir_registers_consumer PRIVATE grevir::registers)
+set_target_properties(grevir_registers_consumer PROPERTIES CXX_EXTENSIONS OFF)
