@@ -102,12 +102,13 @@ Apple Clang 21 / arm64 macOS / C++23 validation:
 - Seven public headers compile independently. Eight assertions relocated from the
   original header and eighteen from the legacy test's pure mapping section compile,
   alongside two new width assertions.
-- Eighteen Catch2 cases pass, including all 256 eight-bit mapping inputs, gaps,
+- Twenty-three Catch2 cases pass, including all 256 eight-bit mapping inputs, gaps,
   snapshot decoding, partial/full writes, defaults, pure evaluation, masked access
   and unaligned 16-bit memory offsets. Selection and applier cases cover mixed
   widths, skipped registers, snapshot reads, broadcast/last-read behavior, ordering,
-  empty operations and the explicit barrier scope. Together: 611 assertions in
-  seeded random order.
+  empty operations and the explicit barrier scope. Together: 692 assertions in
+  seeded random order. Five cases adapt the legacy selector/constant/assignment/
+  write exercises into assertions, including all sixteen split-enum values.
 - Compiler probes accept six operations and reject fifteen cases across direct
   access, selectors and appliers: overlap, duplicate/missing fields, field bounds,
   zero mask and nonempty requests against an empty selection.
@@ -116,11 +117,17 @@ Apple Clang 21 / arm64 macOS / C++23 validation:
   constant writes, later-entry lookup and a supplied barrier with Catch2 and Test
   Support discovery disabled.
 
-The byte-array fixture records addresses, widths, values and read/write order;
-`memcpy` avoids host alignment assumptions. It models ordinary memory, not MCU
-side effects or interrupts. Hardware validation remains on hold. The full legacy
-register test mapping and shared `DebugMcuRegister` extraction remain planned;
-the local fixture is new, and only the pure mapping test subset was relocated.
+The byte-array fixture now comes from Grevir Test Support and records addresses,
+widths, values and read/write order. It uses `memcpy` to avoid host alignment
+assumptions and models ordinary memory. Hardware validation remains on hold.
+
+`bit_fields_test.cpp` migrates the remaining portable legacy functions
+`testRegSelector`, `testRegSelector2`, `getTypeWGM1` and `rwTypeWGM1`; printed values
+are now assertions. Enum values, masks and register locations are local fixture
+data. Three field-trait assertions and an exhaustive split-enum case accompany
+them. The full legacy test mapping remains pending because timer/device exercises
+(`dividerTests`, concrete `TestPort` bindings and timer inspection) require later
+AVR work. The new AVR suite separately covers the extracted generic GPIO wrappers.
 
 ## Build and install
 
