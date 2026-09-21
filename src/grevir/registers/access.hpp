@@ -1,7 +1,7 @@
 #pragma once
 
 #include <grevir/registers/fields.hpp>
-#include <cstddef>
+#include <grevir/base/compat/cstddef.hpp>
 
 namespace setl {
 
