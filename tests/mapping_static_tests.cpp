@@ -80,3 +80,17 @@ using TestTypesOfBits1T = setl::UnsignedType<TestTypesOfBits1>::type;
 
 static_assert(sizeof(setl::BitsRW<bool, 8>::shift_type) == 2);
 static_assert(sizeof(setl::BitsRW<bool, 16>::shift_type) == 4);
+
+// Full-width identities used to select ambiguous partial specializations.
+template <typename T>
+constexpr bool full_width_identity() {
+  constexpr T all = static_cast<T>(~T{0});
+  using Map = setl::ApplyMaskShift<setl::MaskShift<T, all, 0>>;
+  return Map::in_mask == all && Map::out_mask == all
+    && Map::convert(all) == all && Map::convert(T{1}) == T{1}
+    && Map::convert(T{0}) == T{0};
+}
+static_assert(full_width_identity<std::uint8_t>());
+static_assert(full_width_identity<std::uint16_t>());
+static_assert(full_width_identity<std::uint32_t>());
+static_assert(full_width_identity<std::uint64_t>());

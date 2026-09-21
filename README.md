@@ -147,3 +147,8 @@ workspace's shared setup. Tests and fixtures are not installed as production hea
 
 Arduino layout and dependency metadata are present, but Arduino/target compiler
 compatibility has not been validated. The original Ardoinus sources are unchanged.
+
+Full-width mask identity conversion now uses the single-operation specialization,
+including uint32 and uint64 masks. The prior redundant identity specialization was
+ambiguous for uint32. Native checks cover high-bit preservation and full-register
+write-without-read behavior; this correction introduces no wider arithmetic.

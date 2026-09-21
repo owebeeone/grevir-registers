@@ -87,5 +87,10 @@ int main() {
       || Barrier::enters != 1 || Barrier::exits != 1) {
     return 7;
   }
+  using Full32 = setl::BitsRW<std::uint32_t>;
+  using Full32Reg = setl::IoRegister<setl::BitFields<Full32>,Definition<std::uint32_t,3>,Access>;
+  const auto reads_before = Memory::reads;
+  Full32Reg::ReadModifyWrite(Full32{0x80000001u});
+  if (Memory::reads != reads_before || Full32Reg::Read().value != 0x80000001u) { return 8; }
   return 0;
 }

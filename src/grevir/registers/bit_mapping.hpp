@@ -276,22 +276,15 @@ struct ApplyMaskShift<MaskShift<T, w_mask, w_shift>> {
   }
 };
 
-/// Case of ApplyMaskShift for masking all bits and zero shift.
-template <typename T>
-struct ApplyMaskShift<MaskShift<T, ~(T()), 0>> {
-  static constexpr T in_mask = ~(T());
-  static constexpr T out_mask = ~(T());
+// Two or more operations. The single-operation specialization also covers
+// a full-width identity; a separate dependent-mask specialization is ambiguous.
+template <typename T, T w_mask, int w_shift, typename Next, typename... MSs>
+struct ApplyMaskShift<MaskShift<T, w_mask, w_shift>, Next, MSs...> {
+  using Rest = ApplyMaskShift<Next, MSs...>;
+  static constexpr T in_mask = w_mask | Rest::in_mask;
+  static constexpr T out_mask = bit_shift(w_mask, w_shift) | Rest::out_mask;
   static constexpr T convert(T value) {
-    return value;
-  }
-};
-
-template <typename T, T w_mask, int w_shift, typename...MSs>
-struct ApplyMaskShift<MaskShift<T, w_mask, w_shift>, MSs...> {
-  static constexpr T in_mask = w_mask | ApplyMaskShift<MSs...>::in_mask;
-  static constexpr T out_mask = bit_shift(w_mask, w_shift) | ApplyMaskShift<MSs...>::out_mask;
-  static constexpr T convert(T value) {
-    return bit_shift(value & w_mask, w_shift) | ApplyMaskShift<MSs...>::convert(value);
+    return bit_shift(value & w_mask, w_shift) | Rest::convert(value);
   }
 };
 

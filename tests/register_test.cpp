@@ -90,3 +90,14 @@ TEST_CASE_METHOD(Fixture, "masked access cannot change bits outside the mask", "
   REQUIRE(Memory::bytes[3] == 0xaf);
   REQUIRE(Memory::events == std::vector<Event>{{Kind::Read, 3, 1, 0xa0}, {Kind::Write, 3, 1, 0xaf}});
 }
+
+TEST_CASE_METHOD(Fixture, "full width 32 bit fields preserve high bits without read before write", "[registers]") {
+  using Field = setl::BitsRW<std::uint32_t>;
+  using Register = setl::IoRegister<setl::BitFields<Field>, Definition<std::uint32_t, 1>, Access>;
+  Memory::bytes.fill(0xa5);
+  Register::ReadModifyWrite(Field{0x80000001u});
+  REQUIRE(Memory::events == std::vector<Event>{{Kind::Write, 1, 4, 0x80000001u}});
+  REQUIRE(Register::Read().value == 0x80000001u);
+  REQUIRE(Memory::bytes[0] == 0xa5);
+  REQUIRE(Memory::bytes[5] == 0xa5);
+}
