@@ -1,5 +1,15 @@
 # Grevir Registers
 
+**Public API:** [Grevir Registers](https://github.com/owebeeone/grevir-wz/blob/main/docs/api/registers.md).
+See [installation](https://github.com/owebeeone/grevir-wz/blob/main/docs/install.md) and
+[supported platforms](https://github.com/owebeeone/grevir-wz/blob/main/docs/supported.md).
+The workspace `/docs` is the current user-facing contract; development
+checkpoints below are historical.
+
+Typed register fields and explicit access-policy bindings.
+
+## Development record (historical)
+
 Portable bit mappings, typed field values, field formats and explicit register
 access, extracted from Ardoinus `setl_bit_fields.h`. This first increment retains
 the `setl` API names and depends only on Grevir Base. Register selection and
