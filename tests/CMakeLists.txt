@@ -11,12 +11,13 @@ if(GREVIR_BUILD_COMPILE_CHECKS)
   add_library(grevir_registers_compile OBJECT extracted_static_tests.cpp mapping_static_tests.cpp ${header_sources})
   target_link_libraries(grevir_registers_compile PRIVATE grevir::registers)
   set_target_properties(grevir_registers_compile PROPERTIES CXX_EXTENSIONS OFF)
-  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "^(AppleClang|Clang|GNU)$")
-    message(FATAL_ERROR "Register contract probes currently require a Clang/GNU driver")
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "^(AppleClang|Clang|GNU|MSVC)$")
+    message(FATAL_ERROR "Register contract probes require a supported C++ compiler driver")
   endif()
   add_custom_target(grevir_registers_contract_checks ALL
     COMMAND "${CMAKE_COMMAND}"
       "-DCXX=${CMAKE_CXX_COMPILER}"
+      "-DCOMPILER_ID=${CMAKE_CXX_COMPILER_ID}"
       "-DINCLUDE_DIRS=$<TARGET_PROPERTY:grevir_registers_compile,INCLUDE_DIRECTORIES>"
       "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}/contract_probe.cpp"
       "-DLOG_DIR=${CMAKE_CURRENT_BINARY_DIR}/contract-results"
